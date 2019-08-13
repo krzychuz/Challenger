@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Challenger.Web.Configuration;
 using Challenger.Web.EndomondoRest;
@@ -21,6 +22,13 @@ namespace Challenger.Web.Controllers
             ChallengeResponse challengeData = await endomondoRestClient.GetChallengeData();
 
             return Ok(challengeData);
+        }
+
+        public async Task<IActionResult> GetTeams()
+        {
+            Dictionary<int, Team> teams = await endomondoRestClient.GetTeams();
+
+            return Ok(teams);
         }
     }
 }

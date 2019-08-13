@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Challenger.Web.Configuration;
+using Challenger.Web.Mocks;
 using Challenger.Web.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -58,6 +59,8 @@ namespace Challenger.Web.EndomondoRest
                     authToken = responseDictionary[nameof(authToken)];
                     isLoggedIn = true;
                 }
+                else
+                    throw new Exception("Authorization token was not fetched. Failed to login.");
             }
             else
                 throw new Exception("Could not login.");
@@ -88,6 +91,27 @@ namespace Challenger.Web.EndomondoRest
                 isLoggedIn = false;
                 await Login();
             }
+        }
+
+        public async Task<Dictionary<int, Team>> GetTeams()
+        {
+            var teams = new Dictionary<int, Team>();
+            var mock = new TeamMock();
+
+            for(int i = 1; i < 5; i++)
+                teams[i] = new Team(i);
+
+
+            var challengeData = await GetChallengeData();
+
+            foreach(var r in challengeData.Ranks)
+            {
+                var person = r.From;
+                var team = mock.TeamsDictionary[person.Id];
+                teams[team].Participants.Add(person);
+            }
+
+            return teams;
         }
 
         private Dictionary<string, string> ParseLoginResponse(string response)
