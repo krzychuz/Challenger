@@ -1,3 +1,4 @@
+using Challenger.Web.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,7 +16,7 @@ namespace Challenger.Web
       Configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; set; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
@@ -27,6 +28,9 @@ namespace Challenger.Web
       {
         configuration.RootPath = "ClientApp/build";
       });
+      
+      services.AddOptions();
+      services.Configure<EndomondoData>(Configuration.GetSection(nameof(EndomondoData)));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +46,11 @@ namespace Challenger.Web
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
       }
+
+      var builder = new ConfigurationBuilder()
+        .SetBasePath(env.ContentRootPath)
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+      Configuration = builder.Build();
 
       app.UseHttpsRedirection();
       app.UseStaticFiles();
