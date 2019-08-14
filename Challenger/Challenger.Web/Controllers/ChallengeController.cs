@@ -10,11 +10,11 @@ namespace Challenger.Web.Controllers
 {
     public class ChallengeController : Controller
     {
-        private readonly EndomondoRestClient endomondoRestClient;
+        private readonly IEndomondoRestClient endomondoRestClient;
 
-        public ChallengeController(IOptions<EndomondoData> configuration)
+        public ChallengeController(IEndomondoRestClient endomondoRestClient)
         {
-            endomondoRestClient = new EndomondoRestClient(configuration);
+            this.endomondoRestClient = endomondoRestClient;
         }
 
         public async Task<IActionResult> ChallengeData()
