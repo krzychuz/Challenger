@@ -26,7 +26,7 @@ namespace Challenger.Web.Controllers
 
         public async Task<IActionResult> GetTeamsData()
         {
-            Dictionary<int, Team> teams = await endomondoRestClient.GetTeamsScore();
+            List<Team> teams = await endomondoRestClient.GetTeamsScore();
 
             return Ok(teams);
         }

@@ -93,7 +93,7 @@ namespace Challenger.Web.EndomondoRest
             }
         }
 
-        public async Task<Dictionary<int, Team>> GetTeamsScore()
+        public async Task<List<Team>> GetTeamsScore()
         {
             var teams = new Dictionary<int, Team>();
             var mock = new TeamSplitMock();
@@ -105,11 +105,22 @@ namespace Challenger.Web.EndomondoRest
 
             foreach(var r in challengeData.Ranks)
             {
-                var team = mock.TeamsDictionary[r.From.Id];
-                teams[team].Score += r.Value;
+                int team = 0;
+                try
+                {
+                    team = mock.TeamsDictionary[r.From.Id];
+                    teams[team].Score += r.Value;
+                }
+                catch(KeyNotFoundException)
+                {
+                    throw new Exception("Unkown user! Perhaps TeamsMock should be updated.");
+                }
             }
 
-            return teams;
+            var teamsList = teams.Values.ToList();
+            var sortedTemasList = teamsList.OrderByDescending(x => x.Score).ToList();
+
+            return sortedTemasList;
         }
 
         private Dictionary<string, string> ParseLoginResponse(string response)
