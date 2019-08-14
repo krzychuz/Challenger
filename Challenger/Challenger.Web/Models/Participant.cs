@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 
 namespace Challenger.Web.Models
 {
-    public class Participants : Team
+    public class Participant : Friend, IFriend
     {
-        public Participants(int id, string name) : base(id, name)
-        {
-            ParticipantsList = new List<Friend>();
-        }
+        public int TeamNumber { get; set; }
 
-        public List<Friend> ParticipantsList { get; set; }
+        public Participant(IFriend friend)
+        {
+            FirstName = friend.FirstName;
+            LastName = friend.LastName;
+        }
     }
 }

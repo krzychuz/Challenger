@@ -33,7 +33,7 @@ namespace Challenger.Web.Controllers
 
         public async Task<IActionResult> GetTeamsSplit()
         {
-            List<Participants> teams = await endomondoRestClient.GetTeamsSplit();
+            List<Participant> teams = await endomondoRestClient.GetTeamsSplit();
 
             return Ok(teams);
         }

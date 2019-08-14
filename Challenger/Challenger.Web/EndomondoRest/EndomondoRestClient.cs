@@ -113,42 +113,39 @@ namespace Challenger.Web.EndomondoRest
                 }
             }
 
+            var unknownTeam = teams[0];
+
+            if (unknownTeam.Score == 0)
+                teams.Remove(0);
+
             var teamsList = teams.Values.ToList();
             var sortedTemasList = teamsList.OrderByDescending(x => x.Score).ToList();
 
             return sortedTemasList;
         }
 
-        public async Task<List<Participants>> GetTeamsSplit()
+        public async Task<List<Participant>> GetTeamsSplit()
         {
-            var teams = new Dictionary<int, Participants>();
             var mock = new TeamSplitMock();
-
-            for (int i = 1; i < 8; i++)
-                teams[i] = new Participants(i, "Team " + i);
-
-            teams[0] = new Participants(0, "Unknown team");
+            var participants = new List<Participant>();
 
             var challengeData = await GetChallengeData();
 
             foreach (var r in challengeData.Ranks)
             {
-                int team = 0;
+                var newParticipant = new Participant(r.From);
                 try
-                {
-                    team = mock.TeamsDictionary[r.From.Id];
-                    teams[team].ParticipantsList.Add(r.From);
+                { 
+                    newParticipant.TeamNumber = mock.TeamsDictionary[r.From.Id];
                 }
                 catch (KeyNotFoundException)
                 {
-                    teams[0].Score += r.Value;
+                    newParticipant.TeamNumber = 0;
                 }
+                participants.Add(newParticipant);
             }
 
-            var teamsList = teams.Values.ToList();
-            var sortedTemasList = teamsList.OrderByDescending(x => x.Id).ToList();
-
-            return sortedTemasList;
+            return participants.OrderBy(x => x.TeamNumber).ToList();
         }
 
         private Dictionary<string, string> ParseLoginResponse(string response)

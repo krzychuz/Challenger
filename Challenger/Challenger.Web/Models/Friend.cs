@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Challenger.Web.Models
 {
-    public class Friend
+    public class Friend : IFriend
     {
         [JsonProperty(PropertyName = "first_name")]
         public string FirstName { get; set; }
