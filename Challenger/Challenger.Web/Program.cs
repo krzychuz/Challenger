@@ -19,6 +19,8 @@ namespace Challenger.Web
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
       WebHost.CreateDefaultBuilder(args)
+        .UseIISIntegration()
+        .UseKestrel()
         .UseStartup<Startup>();
   }
 }
