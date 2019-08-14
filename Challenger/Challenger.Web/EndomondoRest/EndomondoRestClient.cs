@@ -92,7 +92,7 @@ namespace Challenger.Web.EndomondoRest
             var teams = new Dictionary<int, Team>();
             var mock = new TeamSplitMock();
 
-            for(int i = 1; i < 5; i++)
+            for(int i = 1; i < 8; i++)
                 teams[i] = new Team(i, "Team " + i);
 
             var challengeData = await GetChallengeData();
