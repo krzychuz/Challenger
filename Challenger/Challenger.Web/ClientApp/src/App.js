@@ -10,7 +10,7 @@ export default class App extends Component {
   render () {
     return (
         <Layout>
-            <Route path='/' component={Chart} />
+            <Route exact path='/' component={Chart} />
             <Route path='/chart' component={Chart} />
             <Route path='/split' component={TeamsSplit} />
       </Layout>
