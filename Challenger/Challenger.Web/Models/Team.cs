@@ -7,13 +7,13 @@ namespace Challenger.Web.Models
 {
     public class Team
     {
-        public Team(int id)
+        public Team(int id, string name)
         {
             Id = id;
-            Participants = new List<Friend>();
+            Name = name;
         }
-
-        public List<Friend> Participants { get; set; }
         public int Id { get; set; }
+        public string Name { get; set; }
+        public double Score { get; set;  }
     }
 }

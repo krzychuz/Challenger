@@ -93,22 +93,20 @@ namespace Challenger.Web.EndomondoRest
             }
         }
 
-        public async Task<Dictionary<int, Team>> GetTeams()
+        public async Task<Dictionary<int, Team>> GetTeamsScore()
         {
             var teams = new Dictionary<int, Team>();
-            var mock = new TeamMock();
+            var mock = new TeamSplitMock();
 
             for(int i = 1; i < 5; i++)
-                teams[i] = new Team(i);
-
+                teams[i] = new Team(i, "Team " + i);
 
             var challengeData = await GetChallengeData();
 
             foreach(var r in challengeData.Ranks)
             {
-                var person = r.From;
-                var team = mock.TeamsDictionary[person.Id];
-                teams[team].Participants.Add(person);
+                var team = mock.TeamsDictionary[r.From.Id];
+                teams[team].Score += r.Value;
             }
 
             return teams;

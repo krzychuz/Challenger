@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Challenger.Web.Mocks
 {
-    public class TeamMock
+    public class TeamSplitMock
     {
         public readonly Dictionary<int, int> TeamsDictionary;
 
-        public TeamMock()
+        public TeamSplitMock()
         {
             TeamsDictionary = new Dictionary<int, int>
             {

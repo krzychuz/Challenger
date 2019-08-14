@@ -11,7 +11,7 @@ namespace Challenger.Web.Models
         [JsonProperty(PropertyName = "rank_male")]
         public int RankMale { get; set; }
         [JsonProperty(PropertyName = "value")]
-        public int Value { get; set; }
+        public double Value { get; set; }
         [JsonProperty(PropertyName = "rank_female")]
         public int? RankFemale { get; set; } 
     }
