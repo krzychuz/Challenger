@@ -30,5 +30,12 @@ namespace Challenger.Web.Controllers
 
             return Ok(teams);
         }
+
+        public async Task<IActionResult> GetTeamsSplit()
+        {
+            List<Participants> teams = await endomondoRestClient.GetTeamsSplit();
+
+            return Ok(teams);
+        }
     }
 }

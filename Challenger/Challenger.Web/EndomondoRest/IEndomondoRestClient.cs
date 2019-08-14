@@ -8,5 +8,6 @@ namespace Challenger.Web.EndomondoRest
     {
         Task<ChallengeResponse> GetChallengeData();
         Task<List<Team>> GetTeamsScore();
+        Task<List<Participants>> GetTeamsSplit();
     }
 }

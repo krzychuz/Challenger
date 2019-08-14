@@ -95,6 +95,8 @@ namespace Challenger.Web.EndomondoRest
             for(int i = 1; i < 8; i++)
                 teams[i] = new Team(i, "Team " + i);
 
+            teams[0] = new Team(0, "Unknown team");
+
             var challengeData = await GetChallengeData();
 
             foreach(var r in challengeData.Ranks)
@@ -107,12 +109,44 @@ namespace Challenger.Web.EndomondoRest
                 }
                 catch(KeyNotFoundException)
                 {
-                    throw new Exception("Unkown user! Perhaps TeamsMock should be updated.");
+                    teams[0].Score += r.Value;
                 }
             }
 
             var teamsList = teams.Values.ToList();
             var sortedTemasList = teamsList.OrderByDescending(x => x.Score).ToList();
+
+            return sortedTemasList;
+        }
+
+        public async Task<List<Participants>> GetTeamsSplit()
+        {
+            var teams = new Dictionary<int, Participants>();
+            var mock = new TeamSplitMock();
+
+            for (int i = 1; i < 8; i++)
+                teams[i] = new Participants(i, "Team " + i);
+
+            teams[0] = new Participants(0, "Unknown team");
+
+            var challengeData = await GetChallengeData();
+
+            foreach (var r in challengeData.Ranks)
+            {
+                int team = 0;
+                try
+                {
+                    team = mock.TeamsDictionary[r.From.Id];
+                    teams[team].ParticipantsList.Add(r.From);
+                }
+                catch (KeyNotFoundException)
+                {
+                    teams[0].Score += r.Value;
+                }
+            }
+
+            var teamsList = teams.Values.ToList();
+            var sortedTemasList = teamsList.OrderByDescending(x => x.Id).ToList();
 
             return sortedTemasList;
         }
