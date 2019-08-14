@@ -7,6 +7,6 @@ namespace Challenger.Web.EndomondoRest
     public interface IEndomondoRestClient
     {
         Task<ChallengeResponse> GetChallengeData();
-        Task<Dictionary<int, Team>> GetTeamsScore();
+        Task<List<Team>> GetTeamsScore();
     }
 }
