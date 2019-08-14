@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Challenger.Web.Configuration;
@@ -12,13 +11,12 @@ using Newtonsoft.Json;
 
 namespace Challenger.Web.EndomondoRest
 {
-    public class EndomondoRestClient
+    public class EndomondoRestClient : IEndomondoRestClient
     {
         private readonly Uri EndomondoBaseUri;
         private readonly string login;
         private readonly string password;
         private string authToken;
-        private bool isLoggedIn;
         private const string BadRequestResponseMessage = "SC_BAD_REQUEST";
         
         private readonly IOptions<EndomondoData> configuration;
@@ -55,10 +53,7 @@ namespace Challenger.Web.EndomondoRest
                 var responseDictionary = ParseLoginResponse(await responseString);
 
                 if (responseDictionary.ContainsKey(nameof(authToken)))
-                {
                     authToken = responseDictionary[nameof(authToken)];
-                    isLoggedIn = true;
-                }
                 else
                     throw new Exception("Authorization token was not fetched. Failed to login.");
             }
@@ -88,7 +83,6 @@ namespace Challenger.Web.EndomondoRest
                     return challengeResponse;
                 }
 
-                isLoggedIn = false;
                 await Login();
             }
         }

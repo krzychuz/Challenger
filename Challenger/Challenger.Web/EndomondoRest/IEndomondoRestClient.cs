@@ -1,0 +1,12 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Challenger.Web.Models;
+
+namespace Challenger.Web.EndomondoRest
+{
+    public interface IEndomondoRestClient
+    {
+        Task<ChallengeResponse> GetChallengeData();
+        Task<Dictionary<int, Team>> GetTeamsScore();
+    }
+}
