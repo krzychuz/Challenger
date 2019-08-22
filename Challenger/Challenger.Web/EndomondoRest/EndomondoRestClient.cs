@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Challenger.Web.Configuration;
-using Challenger.Web.Mocks;
 using Challenger.Web.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -18,18 +18,32 @@ namespace Challenger.Web.EndomondoRest
         private readonly string password;
         private string authToken;
         private const string BadRequestResponseMessage = "SC_BAD_REQUEST";
+
+        private ConfigurationParticipants configurationParticipants;
+        private readonly IHostingEnvironment hostingEnvironment;
         
         private readonly IOptions<EndomondoData> configuration;
 
         private readonly HttpClient client;
 
-        public EndomondoRestClient(IOptions<EndomondoData> configuration)
+        public EndomondoRestClient(IOptions<EndomondoData> configuration, IHostingEnvironment hostingEnvironment)
         {
             this.configuration = configuration;
+            this.hostingEnvironment = hostingEnvironment;
             login = configuration.Value.Credentials.Login;
             password = configuration.Value.Credentials.Password;
             client = new HttpClient();
             EndomondoBaseUri = new Uri("https://api.mobile.endomondo.com");
+
+            LoadParticipants();
+        }
+
+        private void LoadParticipants()
+        {
+            string webRootPath = hostingEnvironment.ContentRootPath; 
+            
+            var participantsJson = System.IO.File.ReadAllText( webRootPath + "/participants.json");
+            configurationParticipants = JsonConvert.DeserializeObject<ConfigurationParticipants>(participantsJson); 
         }
 
         private async Task Login()
@@ -90,7 +104,6 @@ namespace Challenger.Web.EndomondoRest
         public async Task<List<Team>> GetTeamsScore()
         {
             var teams = new Dictionary<int, Team>();
-            var mock = new TeamSplitMock();
 
             for(int i = 1; i < 8; i++)
                 teams[i] = new Team(i, "Team " + i);
@@ -101,10 +114,14 @@ namespace Challenger.Web.EndomondoRest
 
             foreach(var r in challengeData.Ranks)
             {
-                int team = 0;
                 try
                 {
-                    team = mock.TeamsDictionary[r.From.Id];
+                    var configurationParticipant = configurationParticipants.Participants
+                        .SingleOrDefault(participant => participant.ParticipantId == r.From.Id);
+                    if (configurationParticipant == null)
+                        throw new KeyNotFoundException();
+                    
+                    int team = configurationParticipant.TeamNumber;
                     teams[team].Score += (int)r.Value;
                 }
                 catch(KeyNotFoundException)
@@ -126,7 +143,6 @@ namespace Challenger.Web.EndomondoRest
 
         public async Task<List<Participant>> GetTeamsSplit()
         {
-            var mock = new TeamSplitMock();
             var participants = new List<Participant>();
 
             var challengeData = await GetChallengeData();
@@ -136,7 +152,11 @@ namespace Challenger.Web.EndomondoRest
                 var newParticipant = new Participant(r.From);
                 try
                 { 
-                    newParticipant.TeamNumber = mock.TeamsDictionary[r.From.Id];
+                    var configurationParticipant = configurationParticipants.Participants
+                        .SingleOrDefault(participant => participant.ParticipantId == r.From.Id);
+                    if (configurationParticipant == null)
+                        throw new KeyNotFoundException();
+                    newParticipant.TeamNumber = configurationParticipant.TeamNumber;
                 }
                 catch (KeyNotFoundException)
                 {
@@ -150,7 +170,6 @@ namespace Challenger.Web.EndomondoRest
 
         public async Task<List<Participant>> GetIndividualScores()
         {
-            var mock = new TeamSplitMock();
             var participants = new List<Participant>();
 
             var challengeData = await GetChallengeData();
@@ -162,7 +181,11 @@ namespace Challenger.Web.EndomondoRest
                 newParticipant.Position = r.Position;
                 try
                 {
-                    newParticipant.TeamNumber = mock.TeamsDictionary[r.From.Id];
+                    var configurationParticipant = configurationParticipants.Participants
+                        .SingleOrDefault(participant => participant.ParticipantId == r.From.Id);
+                    if (configurationParticipant == null)
+                        throw new KeyNotFoundException();
+                    newParticipant.TeamNumber = configurationParticipant.TeamNumber;
                 }
                 catch (KeyNotFoundException)
                 {
