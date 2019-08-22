@@ -105,11 +105,11 @@ namespace Challenger.Web.EndomondoRest
                 try
                 {
                     team = mock.TeamsDictionary[r.From.Id];
-                    teams[team].Score += r.Value;
+                    teams[team].Score += (int)r.Value;
                 }
                 catch(KeyNotFoundException)
                 {
-                    teams[0].Score += r.Value;
+                    teams[0].Score += (int)r.Value;
                 }
             }
 
