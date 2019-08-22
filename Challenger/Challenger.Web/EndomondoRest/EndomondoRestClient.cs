@@ -148,6 +148,33 @@ namespace Challenger.Web.EndomondoRest
             return participants.OrderBy(x => x.TeamNumber).ToList();
         }
 
+        public async Task<List<Participant>> GetIndividualScores()
+        {
+            var mock = new TeamSplitMock();
+            var participants = new List<Participant>();
+
+            var challengeData = await GetChallengeData();
+
+            foreach (var r in challengeData.Ranks)
+            {
+                var newParticipant = new Participant(r.From);
+                newParticipant.Score = (int)r.Value;
+                newParticipant.Position = r.Position;
+                try
+                {
+                    newParticipant.TeamNumber = mock.TeamsDictionary[r.From.Id];
+                }
+                catch (KeyNotFoundException)
+                {
+                    newParticipant.TeamNumber = 0;
+                }
+                participants.Add(newParticipant);
+            }
+
+            return participants.OrderByDescending(x => x.Score).ToList();
+        }
+
+
         private Dictionary<string, string> ParseLoginResponse(string response)
         {
             const string parameterSeparator = "=";
