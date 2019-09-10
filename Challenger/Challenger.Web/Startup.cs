@@ -1,4 +1,5 @@
 using Challenger.Web.Configuration;
+using Challenger.Web.Data;
 using Challenger.Web.EndomondoRest;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,7 @@ namespace Challenger.Web
       services.AddOptions();
       services.Configure<EndomondoData>(Configuration.GetSection(nameof(EndomondoData)));
       services.AddSingleton<IEndomondoRestClient, EndomondoRestClient>();
+      services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
