@@ -7,9 +7,8 @@ namespace Challenger.Web.Models
 {
     public class Team
     {
-        public Team(int id, string name)
+        public Team(string name)
         {
-            Id = id;
             Name = name;
         }
 
@@ -20,5 +19,7 @@ namespace Challenger.Web.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public double Score { get; set;  }
+        
+        public IEnumerable<Participant> Participants { get; set; }
     }
 }
