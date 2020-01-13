@@ -15,7 +15,7 @@ namespace Challenger.Web.Data
         public GenericRepository(LiteDatabase context)
         {
             this.context = context;
-            dbSet = context.GetCollection<T>(nameof(T));
+            dbSet = context.GetCollection<T>(typeof(T).Name);
         }
 
         public virtual T GetById(object id)
