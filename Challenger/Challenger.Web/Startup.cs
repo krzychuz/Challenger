@@ -1,3 +1,4 @@
+using System;
 using Challenger.Web.Configuration;
 using Challenger.Web.Data;
 using Challenger.Web.EndomondoRest;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Challenger.Web
 {
@@ -35,6 +37,10 @@ namespace Challenger.Web
       services.Configure<EndomondoData>(Configuration.GetSection(nameof(EndomondoData)));
       services.AddSingleton<IEndomondoRestClient, EndomondoRestClient>();
       services.AddScoped<IUnitOfWork, UnitOfWork>();
+      services.AddSwaggerGen(c =>
+      {
+        c.SwaggerDoc("v1", new Info {  Version = "v1" });
+      });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,13 +66,14 @@ namespace Challenger.Web
       app.UseStaticFiles();
       app.UseSpaStaticFiles();
 
-      app.UseMvc(routes =>
-      {
-        routes.MapRoute(
-                  name: "default",
-                  template: "{controller}/{action=Index}/{id?}");
-      });
+      app.UseMvcWithDefaultRoute();
 
+      app.UseSwagger();
+      app.UseSwaggerUI(c =>
+      {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", string.Empty);
+      });
+      
       app.UseSpa(spa =>
       {
         spa.Options.SourcePath = "ClientApp";
