@@ -93,9 +93,9 @@ namespace Challenger.Web.EndomondoRest
             var mock = new TeamSplitMock();
 
             for(int i = 1; i < 8; i++)
-                teams[i] = new Team(i, "Team " + i);
+                teams[i] = new Team("Team " + i);
 
-            teams[0] = new Team(0, "Unknown team");
+            teams[0] = new Team("Unknown team");
 
             var challengeData = await GetChallengeData();
 

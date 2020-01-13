@@ -23,5 +23,9 @@ namespace Challenger.Web.Models
             FirstName = friend.FirstName;
             LastName = friend.LastName;
         }
+
+        public Participant()
+        {
+        }
     }
 }
