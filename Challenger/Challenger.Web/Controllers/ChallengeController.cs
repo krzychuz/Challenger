@@ -37,5 +37,13 @@ namespace Challenger.Web.Controllers
 
             return Ok(teams);
         }
+
+        public async Task<IActionResult> GetIndividualScores()
+        {
+            List<Participant> teams = await endomondoRestClient.GetIndividualScores();
+
+            return Ok(teams);
+        }
+
     }
 }

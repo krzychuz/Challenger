@@ -8,6 +8,15 @@ namespace Challenger.Web.Models
     public class Participant : Friend, IFriend
     {
         public int TeamNumber { get; set; }
+        public int Score { get; set; }
+        public int Position { get; set; }
+        public string DisplayName
+        {
+            get
+            {
+                return (FirstName + " " + LastName);
+            }
+        }
 
         public Participant(IFriend friend)
         {

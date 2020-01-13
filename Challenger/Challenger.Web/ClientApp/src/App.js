@@ -3,6 +3,7 @@ import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Chart } from './components/Chart';
 import { TeamsSplit } from './components/TeamsSplit';
+import { IndividualChart } from './components/IndividualChart'
 
 export default class App extends Component {
   static displayName = App.name;
@@ -13,6 +14,7 @@ export default class App extends Component {
             <Route exact path='/' component={Chart} />
             <Route path='/chart' component={Chart} />
             <Route path='/split' component={TeamsSplit} />
+            <Route path='/individual' component={IndividualChart} />
       </Layout>
     );
   }
