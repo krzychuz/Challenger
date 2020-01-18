@@ -1,0 +1,20 @@
+﻿.sport {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100px;
+    width: 100px;
+    margin-right: 35px;
+}
+
+.bottom-spacing-big {
+    margin-bottom: 35px;
+}
+
+.bottom-spacing-medium {
+    margin-bottom: 20px;
+}
+
+.bottom-spacing-small {
+    margin-bottom: 10px;
+}
