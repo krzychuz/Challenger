@@ -10,12 +10,23 @@
         }
     ],
     "configurations": [
-        
+
          {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome",
-            "url": "http://localhost:60644",
+            "url": "http://localhost:5000",
+            "webRoot": "${workspaceRoot}/wwwroot",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "/Views": "${workspaceRoot}/Views"
+            }
+         },
+         {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach Chrome",
+            "url": "http://localhost:5000",
             "webRoot": "${workspaceRoot}/wwwroot",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
@@ -32,13 +43,9 @@
              "args": [],
              "cwd": "${workspaceFolder}/Challenger/Challenger.Web",
              "stopAtEntry": false,
-             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-             "serverReadyAction": {
-                 "action": "openExternally",
-                 "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"                
-             },
              "env": {
-                 "ASPNETCORE_ENVIRONMENT": "Development"
+                 "ASPNETCORE_ENVIRONMENT": "Development",
+                 "ASPNETCORE_URLS": "http://localhost:5000"
              },
              "sourceFileMap": {
                  "/Views": "${workspaceFolder}/Views"
