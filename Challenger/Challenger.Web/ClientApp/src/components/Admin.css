@@ -18,3 +18,11 @@
 .bottom-spacing-small {
     margin-bottom: 10px;
 }
+
+.margin-grid {
+    margin-left: 16px;
+}
+
+.bg-column {
+    background-color: #e4e4e4;
+}
