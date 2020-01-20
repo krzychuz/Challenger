@@ -1,6 +1,6 @@
-import './Admin.css';
 import { Draggable } from 'react-beautiful-dnd';
 import React, { Component } from 'react';
+import './style.css';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     background: isDragging ? 'lightgreen' : 'grey',

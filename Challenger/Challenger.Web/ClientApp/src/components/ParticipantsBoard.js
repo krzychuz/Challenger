@@ -1,7 +1,7 @@
-import './Admin.css';
 import { ParticipantsLane } from './ParticipantsLane'
 import React, { Component } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
+import './style.css';
 
 const createParticipantsList = (teamsData) => {
     const teams = teamsData.map(team =>

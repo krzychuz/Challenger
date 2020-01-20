@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Collapse } from 'reactstrap';
 import Button from 'react-bootstrap/Button'
+import './style.css'
 
 export class AddParticipants extends Component {
 
