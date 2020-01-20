@@ -1,7 +1,7 @@
-import './Admin.css';
 import { Droppable } from 'react-beautiful-dnd';
 import { ParticipantCard } from './ParticipantCard'
 import React, { Component } from 'react';
+import './style.css';
 
 const getListStyle = isDraggingOver => ({
     background: isDraggingOver ? '#007bff' : 'lightgrey',

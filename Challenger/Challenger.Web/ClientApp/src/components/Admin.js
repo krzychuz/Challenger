@@ -1,7 +1,7 @@
 ﻿import React, { Component } from 'react';
 import { AddParticipants } from './AddParticipants'
 import { ParticipantsBoard } from './ParticipantsBoard'
-import './Admin.css';
+import './style.css';
 
 export class Admin extends Component {
 
