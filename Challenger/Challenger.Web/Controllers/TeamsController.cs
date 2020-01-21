@@ -71,7 +71,7 @@ namespace Challenger.Web.Controllers
                 Name = "Unassigned",
                 Participants = participantRepository.Get(p => p.TeamNumber == default(int)).ToList()
             };
-            teams.Append(unassignedTeam);
+            teams.Add(unassignedTeam);
 
         return Ok(teams);
         }
@@ -86,7 +86,6 @@ namespace Challenger.Web.Controllers
                 return NotFound();
             
             repository.Delete(teamId);
-            repository.Save();
             
             return Ok();
         }

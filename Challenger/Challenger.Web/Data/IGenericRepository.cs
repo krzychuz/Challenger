@@ -19,7 +19,5 @@ namespace Challenger.Web.Data
         void Insert(T entity);
 
         void Delete(object id);
-
-        void Save();
     }
 }
