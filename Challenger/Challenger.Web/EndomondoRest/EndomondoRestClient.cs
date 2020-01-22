@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Challenger.Web.Configuration;
-using Challenger.Web.Mocks;
+using Challenger.Web.Maps;
 using Challenger.Web.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -13,23 +13,26 @@ namespace Challenger.Web.EndomondoRest
 {
     public class EndomondoRestClient : IEndomondoRestClient
     {
-        private readonly Uri EndomondoBaseUri;
+        private readonly Uri endomondoBaseUri;
         private readonly string login;
         private readonly string password;
         private string authToken;
         private const string BadRequestResponseMessage = "SC_BAD_REQUEST";
         
         private readonly IOptions<EndomondoData> configuration;
+        private readonly IChallengeResponseParticipantsMapper challengeResponseParticipantsMapper;
 
         private readonly HttpClient client;
 
-        public EndomondoRestClient(IOptions<EndomondoData> configuration)
+        public EndomondoRestClient(IOptions<EndomondoData> configuration, 
+            IChallengeResponseParticipantsMapper challengeResponseParticipantsMapper)
         {
             this.configuration = configuration;
+            this.challengeResponseParticipantsMapper = challengeResponseParticipantsMapper;
             login = configuration.Value.Credentials.Login;
             password = configuration.Value.Credentials.Password;
             client = new HttpClient();
-            EndomondoBaseUri = new Uri("https://api.mobile.endomondo.com");
+            endomondoBaseUri = new Uri("https://api.mobile.endomondo.com");
         }
 
         private async Task Login()
@@ -45,7 +48,7 @@ namespace Challenger.Web.EndomondoRest
                 {"email", login}
             };
             var content = new FormUrlEncodedContent(parameters);
-            var response = await client.PostAsync(new Uri(EndomondoBaseUri, authEndpoint), content);
+            var response = await client.PostAsync(new Uri(endomondoBaseUri, authEndpoint), content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -63,18 +66,23 @@ namespace Challenger.Web.EndomondoRest
 
         public async Task<ChallengeResponse> GetChallengeData()
         {
+            return await GetChallengeData(configuration.Value.ChallengeId);
+        }
+        
+        public async Task<ChallengeResponse> GetChallengeData(int challengeId)
+        {
             while (true)
             {
                 const string challengeEndpoint = "/mobile/api/challenge/get";
 
                 var parameters = new Dictionary<string, string>
                 {
-                    {"challengeId", configuration.Value.ChallengeId}, {"authToken", authToken},
+                    {"challengeId", challengeId.ToString()}, {"authToken", authToken},
                     {"fields", "basic,sports,cans,is_in,friends,leaderboard,total,size"}
                 };
 
                 var content = new FormUrlEncodedContent(parameters);
-                var response = await client.PostAsync(new Uri(EndomondoBaseUri, challengeEndpoint), content);
+                var response = await client.PostAsync(new Uri(endomondoBaseUri, challengeEndpoint), content);
                 Task<string> responseStringTask = response.Content.ReadAsStringAsync();
                 string responseString = await responseStringTask;
                 if (!responseString.Contains(BadRequestResponseMessage))
@@ -86,90 +94,19 @@ namespace Challenger.Web.EndomondoRest
                 await Login();
             }
         }
-
-        public async Task<List<Team>> GetTeamsScore()
-        {
-            var teams = new Dictionary<int, Team>();
-            var mock = new TeamSplitMock();
-
-            for(int i = 1; i < 8; i++)
-                teams[i] = new Team("Team " + i);
-
-            teams[0] = new Team("Unknown team");
-
-            var challengeData = await GetChallengeData();
-
-            foreach(var r in challengeData.Ranks)
-            {
-                int team = 0;
-                try
-                {
-                    team = mock.TeamsDictionary[r.From.Id];
-                    teams[team].Score += (int)r.Value;
-                }
-                catch(KeyNotFoundException)
-                {
-                    teams[0].Score += (int)r.Value;
-                }
-            }
-
-            var unknownTeam = teams[0];
-
-            if (unknownTeam.Score == 0)
-                teams.Remove(0);
-
-            var teamsList = teams.Values.ToList();
-            var sortedTemasList = teamsList.OrderByDescending(x => x.Score).ToList();
-
-            return sortedTemasList;
-        }
-
+        
         public async Task<List<Participant>> GetTeamsSplit()
         {
-            var mock = new TeamSplitMock();
-            var participants = new List<Participant>();
-
-            var challengeData = await GetChallengeData();
-
-            foreach (var r in challengeData.Ranks)
-            {
-                var newParticipant = new Participant(r.From);
-                try
-                { 
-                    newParticipant.TeamNumber = mock.TeamsDictionary[r.From.Id];
-                }
-                catch (KeyNotFoundException)
-                {
-                    newParticipant.TeamNumber = 0;
-                }
-                participants.Add(newParticipant);
-            }
-
+            IEnumerable<Participant> participants =
+                await GetParticipantsFromEndomondo(configuration.Value.ChallengeId);
+            
             return participants.OrderBy(x => x.TeamNumber).ToList();
         }
 
         public async Task<List<Participant>> GetIndividualScores()
         {
-            var mock = new TeamSplitMock();
-            var participants = new List<Participant>();
-
-            var challengeData = await GetChallengeData();
-
-            foreach (var r in challengeData.Ranks)
-            {
-                var newParticipant = new Participant(r.From);
-                newParticipant.Score = (int)r.Value;
-                newParticipant.Position = r.Position;
-                try
-                {
-                    newParticipant.TeamNumber = mock.TeamsDictionary[r.From.Id];
-                }
-                catch (KeyNotFoundException)
-                {
-                    newParticipant.TeamNumber = 0;
-                }
-                participants.Add(newParticipant);
-            }
+            IEnumerable<Participant> participants =
+                await GetParticipantsFromEndomondo(configuration.Value.ChallengeId);
 
             return participants.OrderByDescending(x => x.Score).ToList();
         }
@@ -184,6 +121,24 @@ namespace Challenger.Web.EndomondoRest
                 .Where(s => s.Contains(parameterSeparator))
                 .Select(x => x.Split(parameterSeparator))
                 .ToDictionary(x => x[0], x => x[1]);
+        }
+        
+        public async Task<IEnumerable<Participant>> GetParticipantsFromEndomondo(PopulateTeamsRequest populateTeamsRequest)
+        {
+            ChallengeResponse challengeData = await GetChallengeData(populateTeamsRequest.ChallengeId);
+
+            return challengeResponseParticipantsMapper.MapToParticipants(challengeData);
+        }
+
+        public async Task<IEnumerable<Participant>> GetParticipantsFromEndomondo(int challengeId)
+        {
+            return await GetParticipantsFromEndomondo(new PopulateTeamsRequest {ChallengeId = challengeId});
+        }
+        
+        public async Task<IEnumerable<Participant>> GetParticipantsFromEndomondo()
+        {
+            return await GetParticipantsFromEndomondo(new PopulateTeamsRequest
+                {ChallengeId = configuration.Value.ChallengeId});
         }
     }
 }

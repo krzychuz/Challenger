@@ -49,5 +49,10 @@ namespace Challenger.Web.Data
             dbSet.Delete(new BsonValue(id));
         }
 
+        public void DeleteAll()
+        {
+            dbSet.Delete(arg => true);
+        }
+
     }
 }
