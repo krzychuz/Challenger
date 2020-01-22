@@ -39,6 +39,7 @@ namespace Challenger.Web.Controllers
         {
             List<Team> teams = unitOfWork.Repository<Team>().GetAll().ToList();
             var participants = (await endomondoRestClient.GetParticipantsFromEndomondo()).ToList();
+            teamNumbersFiller.FillTeamNumbers(participants);
 
             foreach (var team in teams)
                 team.Score = participants.Where(p => p.TeamNumber == team.Id).Select(p => p.Score).Sum();
