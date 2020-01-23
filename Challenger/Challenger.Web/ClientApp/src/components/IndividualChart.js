@@ -7,7 +7,7 @@ export class IndividualChart extends PureComponent {
         super(props);
         this.state = { challengeData: [], loading: true };
 
-        fetch('Challenge/GetIndividualScores')
+        fetch('api/Challenge/GetIndividualScores')
             .then(response => response.json())
             .then(data => {
                 this.setState({ individualScores: data, loading: false });
