@@ -10,11 +10,27 @@ export class AddParticipants extends Component {
 
         this.state = { isAddParticipantsOpened: false };
         this.toggleAddParticipants = this.toggleAddParticipants.bind(this);
+        this.handleAddParticipants = this.handleAddParticipants.bind(this);
     }
 
     toggleAddParticipants() {
         this.setState({ isAddParticipantsOpened: !this.state.isAddParticipantsOpened });
     }
+
+    handleAddParticipants() {
+        fetch("api/???", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+            body: JSON.stringify({})
+        })
+            .then(() => {
+                // TODO: callback to refresh teams grid
+            });
+    }
+
 
     render() {
         return (
