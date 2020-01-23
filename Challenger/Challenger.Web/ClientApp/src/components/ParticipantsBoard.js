@@ -7,7 +7,7 @@ const createParticipantsList = (teamsData) => {
     const teams = teamsData.map(team =>
         (
             <div className="margin-grid">
-                <h3>Team {team.id}</h3>
+                <h3>{team.name}</h3>
                 <ParticipantsLane teamId={team.id} teamParticipants={team.participants} />
             </div>
         )
