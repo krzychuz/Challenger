@@ -19,10 +19,16 @@
     padding-left: 16px;
     padding-right: 16px;
     padding-top: 16px;
-    width: 250px;
+    width: 300px;
 }
 
 .participant-card {
     user-select: none;
     margin: 0, 0, 16px, 0;
+}
+
+.link {
+  cursor: pointer;
+  color: #dc3545;
+  padding-bottom: 2px;
 }

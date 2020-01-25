@@ -1,5 +1,6 @@
 import { Draggable } from 'react-beautiful-dnd';
 import React, { Component } from 'react';
+import { TiDelete } from "react-icons/ti";
 import './style.css';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
@@ -8,6 +9,21 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 });
 
 export class ParticipantCard extends Component {
+    constructor(props) {
+        super(props);
+        this.handleDeleteParticipant = this.handleDeleteParticipant.bind(this);
+    }
+
+
+    handleDeleteParticipant() {
+        // TODO: Find better way to create query string
+        fetch("api/Teams/teams/" + 0 + "/participants?participantId=" + this.props.participantId, {
+            method: "POST"
+        })
+            .then(() => {
+                window.location.reload();
+            });
+    }
 
     render() {
         return (
@@ -26,8 +42,11 @@ export class ParticipantCard extends Component {
                     )}
                     className="card bg-light mb-3 participant-card">
                     <div className="card-body">
-                        <h5 className="card-title">{this.props.participantDisplayName}</h5>
-                        <p className="card-text">Score: {this.props.participantScore}</p>
+                        <h5 className="card-title">
+                            {this.props.participantDisplayName}
+                            <TiDelete onClick={this.handleDeleteParticipant} className="link"/>
+                            </h5>
+                        <p className="card-text">Score: {parseInt(this.props.participantScore, 10)}</p>
                     </div>
                 </div>
             )}
