@@ -11,6 +11,7 @@ export class AddParticipants extends Component {
         this.state = { isAddParticipantsOpened: false };
         this.toggleAddParticipants = this.toggleAddParticipants.bind(this);
         this.handleAddParticipants = this.handleAddParticipants.bind(this);
+        this.challengeId = React.createRef();
     }
 
     toggleAddParticipants() {
@@ -18,16 +19,19 @@ export class AddParticipants extends Component {
     }
 
     handleAddParticipants() {
-        fetch("api/???", {
+        fetch("api/ChallengeRequest/PopulateTeamsRequest", {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
               },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                challengeId: this.challengeId.current.value
+            })
         })
             .then(() => {
                 // TODO: callback to refresh teams grid
+                window.location.reload();
             });
     }
 
@@ -43,7 +47,7 @@ export class AddParticipants extends Component {
                     <form>
                         <div className="form-row text-center">
                             <div className="col">
-                                <input type="text" className="form-control" placeholder="Endomondo challenge ID" ref="trainingDuration" />
+                                <input type="text" className="form-control" placeholder="Endomondo challenge ID" ref={this.challengeId} />
                             </div>
                             <div className="col-auto">
                                 <button type="submit" className="btn btn-primary bottom-spacing-medium" onClick={this.handleAddParticipants}>Add</button>
