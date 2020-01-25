@@ -9,6 +9,6 @@ namespace Challenger.Web.Configuration
     public class EndomondoData
     {
         public Credentials Credentials { get; set; }
-        public string ChallengeId { get; set; }
+        public int ChallengeId { get; set; }
     }
 }

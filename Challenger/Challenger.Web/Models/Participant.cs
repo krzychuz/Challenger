@@ -7,16 +7,11 @@ namespace Challenger.Web.Models
 {
     public class Participant : Friend, IFriend
     {
+        public int EndomondoId { get; set; }
         public int TeamNumber { get; set; }
-        public int Score { get; set; }
+        public double Score { get; set; }
         public int Position { get; set; }
-        public string DisplayName
-        {
-            get
-            {
-                return (FirstName + " " + LastName);
-            }
-        }
+        public string DisplayName => (FirstName + " " + LastName);
 
         public Participant(IFriend friend)
         {

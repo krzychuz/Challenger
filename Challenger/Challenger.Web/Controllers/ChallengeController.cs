@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Challenger.Web.Configuration;
+using Challenger.Web.Data;
 using Challenger.Web.EndomondoRest;
 using Challenger.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +15,15 @@ namespace Challenger.Web.Controllers
     public class ChallengeController : Controller
     {
         private readonly IEndomondoRestClient endomondoRestClient;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly ITeamNumbersFiller teamNumbersFiller;
 
-        public ChallengeController(IEndomondoRestClient endomondoRestClient)
+        public ChallengeController(IEndomondoRestClient endomondoRestClient, ITeamNumbersFiller teamNumbersFiller,
+            IUnitOfWork unitOfWork)
         {
             this.endomondoRestClient = endomondoRestClient;
+            this.teamNumbersFiller = teamNumbersFiller;
+            this.unitOfWork = unitOfWork;
         }
 
         [HttpGet, Route("[action]")]
@@ -30,7 +37,12 @@ namespace Challenger.Web.Controllers
         [HttpGet, Route("[action]")]
         public async Task<IActionResult> GetTeamsData()
         {
-            List<Team> teams = await endomondoRestClient.GetTeamsScore();
+            List<Team> teams = unitOfWork.Repository<Team>().GetAll().ToList();
+            var participants = (await endomondoRestClient.GetParticipantsFromEndomondo()).ToList();
+            teamNumbersFiller.FillTeamNumbers(participants);
+
+            foreach (var team in teams)
+                team.Score = participants.Where(p => p.TeamNumber == team.Id).Select(p => p.Score).Sum();
 
             return Ok(teams);
         }
@@ -38,17 +50,19 @@ namespace Challenger.Web.Controllers
         [HttpGet, Route("[action]")]
         public async Task<IActionResult> GetTeamsSplit()
         {
-            List<Participant> teams = await endomondoRestClient.GetTeamsSplit();
+            List<Participant> participants = await endomondoRestClient.GetTeamsSplit();
+            teamNumbersFiller.FillTeamNumbers(participants);
 
-            return Ok(teams);
+            return Ok(participants);
         }
 
         [HttpGet, Route("[action]")]
         public async Task<IActionResult> GetIndividualScores()
         {
-            List<Participant> teams = await endomondoRestClient.GetIndividualScores();
+            List<Participant> participants = await endomondoRestClient.GetIndividualScores();
+            teamNumbersFiller.FillTeamNumbers(participants);
 
-            return Ok(teams);
+            return Ok(participants);
         }
 
     }
