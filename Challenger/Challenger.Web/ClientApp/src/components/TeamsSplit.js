@@ -7,7 +7,7 @@ export class TeamsSplit extends Component {
         super(props);
         this.state = { challengeData: [], loading: true };
 
-        fetch('Challenge/GetTeamsSplit')
+        fetch('api/Challenge/GetTeamsSplit')
             .then(response => response.json())
             .then(data => {
                 this.setState({ challengeData: data, loading: false });
