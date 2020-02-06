@@ -38,7 +38,7 @@ namespace Challenger.Web
       services.Configure<EndomondoData>(Configuration.GetSection(nameof(EndomondoData)));
       services.AddSingleton<IEndomondoRestClient, EndomondoRestClient>();
       services.AddSingleton<IChallengeResponseParticipantsMapper, ChallengeResponseParticipantsMapper>();
-      services.AddScoped<ITeamNumbersFiller, TeamNumbersFiller>();
+      services.AddScoped<ITeamDetailsFiller, TeamDetailsFiller>();
       services.AddScoped<IUnitOfWork, UnitOfWork>();
       services.AddSwaggerGen(c =>
       {

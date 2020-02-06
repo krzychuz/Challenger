@@ -3,8 +3,8 @@ using Challenger.Web.Models;
 
 namespace Challenger.Web.Data
 {
-    public interface ITeamNumbersFiller
+    public interface ITeamDetailsFiller
     {
-        void FillTeamNumbers(IEnumerable<Participant> participants);
+        void FillTeamDetails(IEnumerable<Participant> participants);
     }
 }

@@ -11,7 +11,7 @@ export class Chart extends PureComponent {
         super(props);
         this.state = { challengeData: [], loading: true, numberOfTeams: 0 };
 
-        fetch('api/Challenge/GetTeamsData')
+        fetch('api/Challenge/TeamsData')
             .then(response => response.json())
             .then(data => {
                 this.setState({ challengeData: data, loading: false, numberOfTeams: data.length });
