@@ -28,8 +28,8 @@ export class TeamsSplit extends Component {
                     {challengeData.map(challengeData =>
                         <tr key={challengeData.teamNumber}>
                             <td>{challengeData.teamName}</td>
-                            <td>{challengeData.first_name}</td>
-                            <td>{challengeData.last_name}</td>
+                            <td>{challengeData.firstName}</td>
+                            <td>{challengeData.lastName}</td>
                         </tr>
                     )}
                 </tbody>

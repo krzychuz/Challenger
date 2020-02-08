@@ -9,7 +9,6 @@ namespace Challenger.Web.Models
     {
         public int EndomondoId { get; set; }
         public int TeamNumber { get; set; }
-        public string TeamName { get; set; }
         public double Score { get; set; }
         public int Position { get; set; }
         public string DisplayName => (FirstName + " " + LastName);

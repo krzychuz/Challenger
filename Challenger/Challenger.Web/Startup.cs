@@ -3,6 +3,7 @@ using Challenger.Web.Configuration;
 using Challenger.Web.Data;
 using Challenger.Web.EndomondoRest;
 using Challenger.Web.Maps;
+using Challenger.Web.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,8 +39,9 @@ namespace Challenger.Web
       services.Configure<EndomondoData>(Configuration.GetSection(nameof(EndomondoData)));
       services.AddSingleton<IEndomondoRestClient, EndomondoRestClient>();
       services.AddSingleton<IChallengeResponseParticipantsMapper, ChallengeResponseParticipantsMapper>();
-      services.AddScoped<ITeamDetailsFiller, TeamDetailsFiller>();
+      services.AddScoped<ITeamDetailsFetcher, TeamDetailsFetcher>();
       services.AddScoped<IUnitOfWork, UnitOfWork>();
+      services.AddScoped<IParticipantViewModelFactory, ParticipantViewModelFactory>();
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info {  Version = "v1" });
