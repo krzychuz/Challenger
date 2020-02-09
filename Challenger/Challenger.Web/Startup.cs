@@ -3,6 +3,7 @@ using Challenger.Web.Configuration;
 using Challenger.Web.Data;
 using Challenger.Web.EndomondoRest;
 using Challenger.Web.Maps;
+using Challenger.Web.Tools;
 using Challenger.Web.ViewModels;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +40,7 @@ namespace Challenger.Web
       services.Configure<EndomondoData>(Configuration.GetSection(nameof(EndomondoData)));
       services.AddSingleton<IEndomondoRestClient, EndomondoRestClient>();
       services.AddSingleton<IChallengeResponseParticipantsMapper, ChallengeResponseParticipantsMapper>();
+      services.AddScoped<ISnapshotCreator, SnapshotCreator>();
       services.AddScoped<ITeamDetailsFetcher, TeamDetailsFetcher>();
       services.AddScoped<IUnitOfWork, UnitOfWork>();
       services.AddScoped<IParticipantViewModelFactory, ParticipantViewModelFactory>();
