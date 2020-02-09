@@ -5,6 +5,7 @@ import { Chart } from './components/Chart';
 import { TeamsSplit } from './components/TeamsSplit';
 import { IndividualChart } from './components/IndividualChart'
 import { Admin } from './components/Admin'
+import { IndividualProgress } from './components/IndividualProgress'
 
 export default class App extends Component {
   static displayName = App.name;
@@ -17,6 +18,7 @@ export default class App extends Component {
             <Route path='/split' component={TeamsSplit} />
             <Route path='/individual' component={IndividualChart} />
             <Route path='/admin' component={Admin} />
+            <Route path='/individual-progress' component={IndividualProgress} />
       </Layout>
     );
   }

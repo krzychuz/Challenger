@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Challenger.Web.Tools
 {
-    public class SnapshotCreator
+    public class SnapshotCreator : ISnapshotCreator
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IEndomondoRestClient endomondoRestClient;
