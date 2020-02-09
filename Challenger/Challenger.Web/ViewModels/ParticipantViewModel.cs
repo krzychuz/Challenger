@@ -17,6 +17,8 @@ namespace Challenger.Web.ViewModels
 
         public string TeamName { get; set; }
 
+        public double Score { get; set; }
+
         public string PictureUrl { get; set; }
     }
 }
