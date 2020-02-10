@@ -25,7 +25,7 @@ namespace Challenger.Web.Controllers
         [HttpGet, Route("IndividualScoreProgress")]
         public IActionResult GetIndividualScoreProgress()
         {
-            var individualScoreRepository = unitOfWork.Repository<IndividualScoreSnapshot>();
+            var individualScoreRepository = unitOfWork.Repository<IndividualProgressSnapshot>();
             var individualScores = individualScoreRepository.GetAll().ToList();
 
             return Ok(individualScores);

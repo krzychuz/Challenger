@@ -32,3 +32,10 @@
   color: #dc3545;
   padding-bottom: 2px;
 }
+
+.filter-list {
+    column-count: 4;
+    column-gap: 2rem;
+    list-style: none;
+    margin-top: 20px;
+}
