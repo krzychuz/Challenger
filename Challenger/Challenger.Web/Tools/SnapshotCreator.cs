@@ -47,14 +47,55 @@ namespace Challenger.Web.Tools
         {
             List<Participant> participants = await endomondoRestClient.GetIndividualScores();
 
-            var individualScoresSnapshot = new IndividualScoreSnapshot
+            var individualScoresRepository = unitOfWork.Repository<IndividualProgressSnapshot>();
+            var snapshotDate = DateTime.Now;
+
+            foreach (var participant in participants)
             {
-                Participants = participants,
-                SnapshotDate = DateTime.Now
+                var participantSnapshot = individualScoresRepository.Get(p => p.ParticipantName == participant.DisplayName).SingleOrDefault();
+
+                if (participantSnapshot == null)
+                {
+                    var individualProgressSnapshot = CreateNewParticipantSnapshot(snapshotDate, participant);
+                    individualScoresRepository.Insert(individualProgressSnapshot);
+                }
+                else
+                {
+                    var newDataSnapshot = new DataSnapshot
+                    {
+                        Date = snapshotDate
+                        //Score = participant.Score
+                    };
+
+                    var random = new Random().Next(10, 1500);
+                    newDataSnapshot.Score += participantSnapshot.DataSnapshots.Last().Score + random;
+
+                    participantSnapshot.DataSnapshots.Add(newDataSnapshot);
+                    individualScoresRepository.Edit(participantSnapshot);
+                }
+            }
+
+        }
+
+        private IndividualProgressSnapshot CreateNewParticipantSnapshot(DateTime snapshotDate, Participant participant)
+        {
+            var individualProgressSnapshot = new IndividualProgressSnapshot
+            {
+                ParticipantName = participant.DisplayName
             };
 
-            var individualScoresRepository = unitOfWork.Repository<IndividualScoreSnapshot>();
-            individualScoresRepository.Insert(individualScoresSnapshot);
+            var firstDataSnapshot = new DataSnapshot
+            {
+                Date = snapshotDate,
+                Score = participant.Score
+            };
+
+            var newSnapshotList = new List<DataSnapshot>();
+            newSnapshotList.Add(firstDataSnapshot);
+
+            individualProgressSnapshot.DataSnapshots = newSnapshotList;
+
+            return individualProgressSnapshot;
         }
     }
 }

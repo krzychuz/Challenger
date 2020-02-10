@@ -1,81 +1,6 @@
 import React, { PureComponent } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
-
-const data = [
-    {
-        participant: 'Kuba Błachnio',
-        snapshots: [
-            {
-                date: '2020-02-09', score: 2500
-            },
-            {
-                date: '2020-02-10', score: 2700
-            },
-            {
-                date: '2020-02-11', score: 5100
-            },
-            {
-                date: '2020-02-12', score: 7600
-            },
-            {
-                date: '2020-02-13', score: 8100
-            }
-        ]
-    },
-    {
-        participant: 'Magda Kuta',
-        snapshots: [
-            {
-                date: '2020-02-09', score: 600
-            },
-            {
-                date: '2020-02-10', score: 950
-            },
-            {
-                date: '2020-02-11', score: 1400
-            },
-            {
-                date: '2020-02-12', score: 1900
-            },
-            {
-                date: '2020-02-13', score: 2900
-            }
-        ]
-    },
-    {
-        participant: 'Krzysiek Zabawa',
-        snapshots: [
-            {
-                date: '2020-02-09', score: 1600
-            },
-            {
-                date: '2020-02-10', score: 2950
-            },
-            {
-                date: '2020-02-11', score: 3400
-            },
-            {
-                date: '2020-02-12', score: 4900
-            },
-            {
-                date: '2020-02-13', score: 5900
-            }
-        ]
-    }
-];
-
-const CustomTooltip = ({ active, payload, label }) => {
-if (active) {
-    return (
-    <div className="recharts-default-tooltip">
-        <p className="label">{payload[0].payload.participant}</p>
-        <p className="intro">{label}</p>
-        <p className="desc">Score: {payload[0].payload.score}</p>
-    </div>
-    );
-}  
-return null;
-};
+import './style.css';
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -86,25 +11,86 @@ function getRandomColor() {
     return color;
 };
 
-
 export class IndividualProgress extends PureComponent {
 
-    static renderChartLines(data) {
+    constructor(props) {
+        super(props);
+        this.state = { individualScoreData: [], filters: {} };
+
+        fetch('api/ProgressTracking/IndividualScoreProgress')
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ individualScoreData: data });
+            });
+
+        this.renderFiltering = this.renderFiltering.bind(this);
+        this.handleFilterChange = this.handleFilterChange.bind(this);
+        this.renderChartLines = this.renderChartLines.bind(this);
+    }
+
+    renderChartLines() {
+
+        let data = this.state.individualScoreData;
+
         return (
-            data.map(data =>
-                <Line type="monotone" name={data.participant} data={data.snapshots} dataKey="score" stroke={getRandomColor()} activeDot={{ r: 8 }} />
-            )
+            data.map(data => {
+                if(this.state.filters[data.participantName] == true)
+                    return <Line type="monotone" name={data.participantName} data={data.dataSnapshots} dataKey="score" stroke={getRandomColor()} activeDot={{ r: 8 }} />
+            })
+        );
+    }
+
+    handleFilterChange(event) {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+
+        var newFilters = this.state.filters;
+        newFilters[name] = value;
+
+        this.setState({
+            filters: {...newFilters}
+        });
+    }
+
+    renderFiltering() {
+
+        let data = this.state.individualScoreData;
+        let filters = this.state.filters;
+
+        let listItems = data.map(data =>
+            <li key={data.id}>
+                <label>
+                    <input type="checkbox" onChange={this.handleFilterChange} name={data.participantName} />
+                    <span>  {data.participantName}</span>
+                </label>
+            </li>
+        );
+
+        return (
+            <div className= "container">
+            <div className="row">
+                <div className="col-12">
+                    <ul className="filter-list">
+                        {listItems}
+                    </ul>
+                </div>
+            </div>
+            </div>
         );
     }
 
     render() {
 
-    let lines = IndividualProgress.renderChartLines(data);
+    let lines = this.renderChartLines();
+    let filters = this.renderFiltering();
 
     return (
-
         <div>
             <h1>Individuals progress</h1>
+            <h2>Filters</h2>
+            {filters}
+            <h2>Chart</h2>
             <ResponsiveContainer width="100%" height={600}>
                 <LineChart
                     margin={{
