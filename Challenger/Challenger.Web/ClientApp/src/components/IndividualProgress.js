@@ -11,6 +11,24 @@ function getRandomColor() {
     return color;
 };
 
+function formatSnapshots(data) {
+    data.dataSnapshots.forEach(formatSnapshot);
+}
+
+function formatSnapshot(dataSnapshot) {
+    var date = new Date(dataSnapshot.date);
+    dataSnapshot.date = date.getDate() + "." + getFormattedMonth(date.getMonth() + 1) 
+        + " " + date.getHours() + ":" + date.getMinutes();
+    dataSnapshot.score = parseInt(dataSnapshot.score, 10)
+}
+
+function getFormattedMonth(month) {
+    if (month < 10)
+        return "0" + month;
+    else
+        return month;
+}
+
 export class IndividualProgress extends PureComponent {
 
     constructor(props) {
@@ -20,6 +38,7 @@ export class IndividualProgress extends PureComponent {
         fetch('api/ProgressTracking/IndividualScoreProgress')
             .then(response => response.json())
             .then(data => {
+                data.forEach(formatSnapshots)
                 this.setState({ individualScoreData: data });
             });
 
@@ -34,7 +53,7 @@ export class IndividualProgress extends PureComponent {
 
         return (
             data.map(data => {
-                if(this.state.filters[data.participantName] == true)
+                if(this.state.filters[data.participantName] === true)
                     return <Line type="monotone" name={data.participantName} data={data.dataSnapshots} dataKey="score" stroke={getRandomColor()} activeDot={{ r: 8 }} />
             })
         );
@@ -56,7 +75,6 @@ export class IndividualProgress extends PureComponent {
     renderFiltering() {
 
         let data = this.state.individualScoreData;
-        let filters = this.state.filters;
 
         let listItems = data.map(data =>
             <li key={data.id}>
