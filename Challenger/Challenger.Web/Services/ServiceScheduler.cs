@@ -1,33 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-public class SchedulerService
+
+namespace Challenger.Web.Services
 {
-    private static SchedulerService _instance;
-    private readonly List<Timer> timers = new List<Timer>();
-
-    private SchedulerService() { }
-
-    public static SchedulerService Instance => _instance ?? (_instance = new SchedulerService());
-
-    public void ScheduleTask(int hour, int min, double intervalInHour, Action task)
+    public class SchedulerService
     {
-        DateTime now = DateTime.Now;
-        DateTime firstRun = new DateTime(now.Year, now.Month, now.Day, hour, min, 0, 0);
+        private static SchedulerService _instance;
+        private readonly List<Timer> timers = new List<Timer>();
 
-        if (now > firstRun)
-            firstRun = firstRun.AddDays(1);
+        private SchedulerService() { }
 
-        TimeSpan timeToGo = firstRun - now;
+        public static SchedulerService Instance => _instance ?? (_instance = new SchedulerService());
 
-        if (timeToGo <= TimeSpan.Zero)
-            timeToGo = TimeSpan.Zero;
-
-        var timer = new Timer(x =>
+        public void ScheduleTask(int hour, int min, double intervalInHour, Action task)
         {
-            task.Invoke();
-        }, null, timeToGo, TimeSpan.FromHours(intervalInHour));
+            DateTime now = DateTime.Now;
+            DateTime firstRun = new DateTime(now.Year, now.Month, now.Day, hour, min, 0, 0);
 
-        timers.Add(timer);
+            if (now > firstRun)
+                firstRun = firstRun.AddDays(1);
+
+            TimeSpan timeToGo = firstRun - now;
+
+            if (timeToGo <= TimeSpan.Zero)
+                timeToGo = TimeSpan.Zero;
+
+            var timer = new Timer(x =>
+            {
+                task.Invoke();
+            }, null, timeToGo, TimeSpan.FromHours(intervalInHour));
+
+            timers.Add(timer);
+        }
     }
 }

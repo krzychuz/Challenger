@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Challenger.Web.Data;
 using Challenger.Web.Models;
+using Challenger.Web.Services;
 using Challenger.Web.Tools;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,6 +54,18 @@ namespace Challenger.Web.Controllers
         {
             // Development purposes only, normally executed by ServiceScheduler
             snapshotCreator.CreateChallengeSnapshot();
+            return Ok();
+        }
+
+        [HttpPost, Route("StartScheduler")]
+        public IActionResult StartScheduler()
+        {
+            SnapshotScheduler.IntervalInMinutes(21, 15, 1, () =>
+                {
+                    snapshotCreator.CreateIndividualScoresSnapshot();
+                }
+            );
+
             return Ok();
         }
     }
