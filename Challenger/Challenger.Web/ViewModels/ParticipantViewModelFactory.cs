@@ -25,6 +25,7 @@ namespace Challenger.Web.ViewModels
                 DisplayName = model.DisplayName,
                 TeamName = teamDetailsFiller.GetTeamName(model),
                 TeamNumber = teamDetailsFiller.GetTeamNumber(model),
+                Score = model.Score,
                 PictureUrl = model.PictureUrl
             };
 
