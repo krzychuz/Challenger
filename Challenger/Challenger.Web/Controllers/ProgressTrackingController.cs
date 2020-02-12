@@ -35,7 +35,7 @@ namespace Challenger.Web.Controllers
         [HttpGet, Route("TeamScoreProgress")]
         public IActionResult GetTeamScoreProgress()
         {
-            var teamScoreRepository = unitOfWork.Repository<TeamScoreSnapshot>();
+            var teamScoreRepository = unitOfWork.Repository<TeamProgressSnapshot>();
             var teamScores = teamScoreRepository.GetAll().ToList();
 
             return Ok(teamScores);
@@ -60,9 +60,12 @@ namespace Challenger.Web.Controllers
         [HttpPost, Route("StartScheduler")]
         public IActionResult StartScheduler()
         {
-            SnapshotScheduler.IntervalInMinutes(21, 15, 1, () =>
+            var now = DateTime.Now;
+
+            SnapshotScheduler.IntervalInMinutes(now.Hour, now.Minute + 1, 1, () =>
                 {
                     snapshotCreator.CreateIndividualScoresSnapshot();
+                    snapshotCreator.CreateChallengeSnapshot();
                 }
             );
 

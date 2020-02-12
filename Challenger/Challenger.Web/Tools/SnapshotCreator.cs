@@ -25,6 +25,10 @@ namespace Challenger.Web.Tools
         public async void CreateChallengeSnapshot()
         {
             List<Team> teams = unitOfWork.Repository<Team>().GetAll().ToList();
+
+            var teamsScoresRepository = unitOfWork.Repository<TeamProgressSnapshot>();
+            var snapshotDate = DateTime.Now;
+
             var participants = (await endomondoRestClient.GetParticipantsFromEndomondo()).ToList();
 
             foreach (var participant in participants)
@@ -33,14 +37,28 @@ namespace Challenger.Web.Tools
             foreach (var team in teams)
                 team.Score = participants.Where(p => p.TeamNumber == team.Id).Select(p => p.Score).Sum();
 
-            var teamScoreSnapshot = new TeamScoreSnapshot
+            foreach (var team in teams)
             {
-                Teams = teams,
-                SnapshotDate = DateTime.Now
-            };
+                var teamSnapshot = teamsScoresRepository.Get(t => t.TeamName == team.Name).SingleOrDefault();
 
-            var teamScoreRepository = unitOfWork.Repository<TeamScoreSnapshot>();
-            teamScoreRepository.Insert(teamScoreSnapshot);
+                if (teamSnapshot == null)
+                {
+                    var teamProgressSnapshot = CreateNewTeamSnapshot(snapshotDate, team);
+                    teamsScoresRepository.Insert(teamProgressSnapshot);
+                }
+                else
+                {
+                    var newDataSnapshot = new DataSnapshot
+                    {
+                        Date = snapshotDate,
+                        Score = team.Score
+                    };
+
+                    teamSnapshot.DataSnapshots.Add(newDataSnapshot);
+                    teamsScoresRepository.Edit(teamSnapshot);
+                }
+            }
+
         }
 
         public async void CreateIndividualScoresSnapshot()
@@ -63,18 +81,14 @@ namespace Challenger.Web.Tools
                 {
                     var newDataSnapshot = new DataSnapshot
                     {
-                        Date = snapshotDate
-                        //Score = participant.Score
+                        Date = snapshotDate,
+                        Score = participant.Score
                     };
-
-                    var random = new Random().Next(10, 1500);
-                    newDataSnapshot.Score += participantSnapshot.DataSnapshots.Last().Score + random;
 
                     participantSnapshot.DataSnapshots.Add(newDataSnapshot);
                     individualScoresRepository.Edit(participantSnapshot);
                 }
             }
-
         }
 
         private IndividualProgressSnapshot CreateNewParticipantSnapshot(DateTime snapshotDate, Participant participant)
@@ -90,12 +104,37 @@ namespace Challenger.Web.Tools
                 Score = participant.Score
             };
 
-            var newSnapshotList = new List<DataSnapshot>();
-            newSnapshotList.Add(firstDataSnapshot);
+            var newSnapshotList = new List<DataSnapshot>
+            {
+                firstDataSnapshot
+            };
 
             individualProgressSnapshot.DataSnapshots = newSnapshotList;
 
             return individualProgressSnapshot;
+        }
+
+        private TeamProgressSnapshot CreateNewTeamSnapshot(DateTime snapshotDate, Team team)
+        {
+            var teamProgressSnapshot = new TeamProgressSnapshot
+            {
+                TeamName = team.Name
+            };
+
+            var firstDataSnapshot = new DataSnapshot
+            {
+                Date = snapshotDate,
+                Score = team.Score
+            };
+
+            var newSnapshotList = new List<DataSnapshot>
+            {
+                firstDataSnapshot
+            };
+
+            teamProgressSnapshot.DataSnapshots = newSnapshotList;
+
+            return teamProgressSnapshot;
         }
     }
 }
