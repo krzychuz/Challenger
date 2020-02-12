@@ -5,6 +5,14 @@ const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
     return <text x={x + width / 2} y={y + height / 2} fill="#FFFFFF" textAnchor="middle" dy={5}>{`${parseInt(value, 10)} kcal`}</text>;
 };
 
+function formatScores(data) {
+    data.forEach(formatScore);
+}
+
+function formatScore(teamData) {
+    teamData.score = parseInt(teamData.score, 10)
+}
+
 export class Chart extends PureComponent {
 
     constructor(props) {
@@ -14,6 +22,7 @@ export class Chart extends PureComponent {
         fetch('api/Challenge/TeamsData')
             .then(response => response.json())
             .then(data => {
+                formatScores(data);
                 this.setState({ challengeData: data, loading: false, numberOfTeams: data.length });
             });
 
