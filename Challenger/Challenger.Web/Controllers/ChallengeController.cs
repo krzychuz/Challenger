@@ -37,8 +37,8 @@ namespace Challenger.Web.Controllers
             return Ok(challengeData);
         }
 
-        [HttpGet, Route("[action]")]
-        public async Task<IActionResult> TeamsData()
+        [HttpGet, Route("TeamsData")]
+        public async Task<IActionResult> GetTeamsData()
         {
             List<Team> teams = unitOfWork.Repository<Team>().GetAll().ToList();
             var participants = (await endomondoRestClient.GetParticipantsFromEndomondo()).ToList();
@@ -52,8 +52,8 @@ namespace Challenger.Web.Controllers
             return Ok(teams);
         }
 
-        [HttpGet, Route("[action]")]
-        public async Task<IActionResult> TeamsSplit()
+        [HttpGet, Route("TeamsSplit")]
+        public async Task<IActionResult> GetTeamsSplit()
         {
             List<Participant> participants = await endomondoRestClient.GetTeamsSplit();
             List<ParticipantViewModel> participantsViewModels = new List<ParticipantViewModel>();
@@ -64,8 +64,8 @@ namespace Challenger.Web.Controllers
             return Ok(participantsViewModels);
         }
 
-        [HttpGet, Route("[action]")]
-        public async Task<IActionResult> IndividualScores()
+        [HttpGet, Route("IndividualScores")]
+        public async Task<IActionResult> GetIndividualScores()
         {
             List<Participant> participants = await endomondoRestClient.GetIndividualScores();
             List<ParticipantViewModel> participantsViewModels = new List<ParticipantViewModel>();

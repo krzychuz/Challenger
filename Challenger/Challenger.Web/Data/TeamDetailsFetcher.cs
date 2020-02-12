@@ -19,10 +19,7 @@ namespace Challenger.Web.Data
         {
             var storedParticipant = participantsRepository.Get(p => p.EndomondoId == participant.EndomondoId).SingleOrDefault();
 
-            if (storedParticipant != null)
-                return storedParticipant.TeamNumber;
-
-            return 0;
+            return storedParticipant?.TeamNumber ?? 0;
         }
 
         public string GetTeamName(Participant participant)
