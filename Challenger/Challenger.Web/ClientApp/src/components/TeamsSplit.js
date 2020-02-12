@@ -7,7 +7,7 @@ export class TeamsSplit extends Component {
         super(props);
         this.state = { challengeData: [], loading: true };
 
-        fetch('api/Challenge/GetTeamsSplit')
+        fetch('api/Challenge/TeamsSplit')
             .then(response => response.json())
             .then(data => {
                 this.setState({ challengeData: data, loading: false });
@@ -27,9 +27,9 @@ export class TeamsSplit extends Component {
                 <tbody>
                     {challengeData.map(challengeData =>
                         <tr key={challengeData.teamNumber}>
-                            <td>{challengeData.teamNumber}</td>
-                            <td>{challengeData.first_name}</td>
-                            <td>{challengeData.last_name}</td>
+                            <td>{challengeData.teamName}</td>
+                            <td>{challengeData.firstName}</td>
+                            <td>{challengeData.lastName}</td>
                         </tr>
                     )}
                 </tbody>

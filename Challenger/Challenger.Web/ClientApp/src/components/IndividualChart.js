@@ -5,15 +5,24 @@ const renderCustomBarLabel = ({ payload, x, y, width, height, value }) => {
     return <text x={x + width / 2} y={y + height / 2} fill="#FFFFFF" textAnchor="middle" dy={5}>{`${parseInt(value, 10)} kcal`}</text>;
 };
 
+function formatScores(data) {
+    data.forEach(formatScore);
+}
+
+function formatScore(teamData) {
+    teamData.score = parseInt(teamData.score, 10)
+}
+
 export class IndividualChart extends PureComponent {
 
     constructor(props) {
         super(props);
         this.state = { challengeData: [], loading: true, numberOfParticipants: 0 };
 
-        fetch('api/Challenge/GetIndividualScores')
+        fetch('api/Challenge/IndividualScores')
             .then(response => response.json())
             .then(data => {
+                formatScores(data);
                 this.setState({ individualScores: data, loading: false, numberOfParticipants: data.length });
             });
 
