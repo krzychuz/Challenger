@@ -39,6 +39,12 @@ export class NavMenu extends Component {
                 <NavItem>
                     <NavLink tag={Link} className="text-dark" to="/individual">Individual scores</NavLink>
                 </NavItem>
+                <NavItem>
+                    <NavLink tag={Link} className="text-dark" to="/individual-progress">Individual progress</NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink tag={Link} className="text-dark" to="/team-progress">Team progress</NavLink>
+                </NavItem>
               </ul>
             </Collapse>
           </Container>
